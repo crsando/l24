@@ -48,7 +48,7 @@ function textify(seq)
     for _, token in ipairs(seq) do 
         if type(token) == "number" then 
             push(token)
-        elseif any_of(token, {"+", "-", "/", "*"}) then 
+        elseif any_of(token, {"+", "-", "/", "*", "^"}) then 
             local b = pop()
             local a = pop()
             push( "(" .. a .. token .. b .. ")" )
@@ -89,7 +89,37 @@ function calculate(seq)
         ["+"] = wrap_binary(function(a,b) return a + b end) ,
         ["-"] = wrap_binary(function(a,b) return a - b end) ,
         ["*"] = wrap_binary(function(a,b) return a * b end) ,
-        ["/"] = wrap_binary(function(a,b) return a / b end) ,
+        ["/"] = function()
+                local b = pop()
+                local a = pop()
+
+                if b == 0 then return false end
+
+                local r = a / b
+
+                -- cannot be divided
+                if (b * r) ~= a then 
+                    return false
+                end
+
+                push(r)
+                return true
+            end,
+        
+        ["^"] = function ()
+                local b = pop()
+                local a = pop()
+
+                local n = 0 
+                local s = 1
+                if s < 0 then return false end 
+                while n < b do 
+                    s = s * a
+                    n = n + 1
+                end 
+                push(s)
+                return true
+            end,
         ["!"] = function ()
                 local n = pop()
                 if (n < 0) or (n > 50) then 
@@ -162,7 +192,7 @@ function search(nums)
             end
         end
 
-        if (#seq > 0) and (seq[#seq] ~= "!" ) then 
+        if (depth >= 1) and (seq[#seq] ~= "!" ) then 
             local r,t =  dive("!", 0)
             if r then return r, t end
         end
@@ -218,11 +248,12 @@ end
 
 
 local function test3()
-    local test_seq = { 1, 1, 1, 1, "+", "+", "+", "!" }
+    local test_seq = { 2, 1, 1, 1, "+", "+", "^" }
     local rst = calculate(test_seq)
     print(textify(test_seq), "=", rst)
 end
 
 -- test3()
 
+-- test3()
 main()
