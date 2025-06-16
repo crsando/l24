@@ -150,28 +150,20 @@ function search(nums)
 
         if depth >= 2 then 
             for _, c in ipairs{"+", "-", "*", "/"} do 
-                local seq_next = duplicate(seq)
-                seq_next[#seq_next + 1] = c
-                local r, t = recursive(seq_next, nums, depth - 1)
+                local r,t =  dive(c, -1)
                 if r then return r, t end
-                n_search = n_search + 1
             end
         end 
 
         if #nums > 0 then 
             for _, n in pairs(nums) do 
-                local seq_next = duplicate(seq)
-                seq_next[#seq_next + 1] = n
-                local r, t = recursive(seq_next, except(nums, n), depth + 1)
+                local r,t =  dive(n, 1)
                 if r then return r, t end
-                n_search = n_search + 1
             end
         end
 
         if (#seq > 0) and (seq[#seq] ~= "!" ) then 
-            local seq_next = duplicate(seq)
-            seq_next[#seq_next + 1] = n
-            local r, t = recursive(seq_next, nums, depth)
+            local r,t =  dive("!", 0)
             if r then return r, t end
         end
 
@@ -204,18 +196,33 @@ local function test2()
     end
 end
 
-local nums = {}
+local function main()
 
-for i = 1, #arg do 
-    local n = tonumber(arg[i])
-    if n then 
-        nums[#nums + 1] = n 
+    local nums = {}
+
+    for i = 1, #arg do 
+        local n = tonumber(arg[i])
+        if n then 
+            nums[#nums + 1] = n 
+        end
     end
+
+    if #nums == 4 then 
+        local r, seq = search(nums)
+        if r then print("found") end
+    else 
+        print("invalid arguments")
+    end
+
 end
 
-if #nums == 4 then 
-    local r, seq = search(nums)
-    if r then print("found") end
-else 
-    print("invalid arguments")
+
+local function test3()
+    local test_seq = { 1, 1, 1, 1, "+", "+", "+", "!" }
+    local rst = calculate(test_seq)
+    print(textify(test_seq), "=", rst)
 end
+
+-- test3()
+
+main()
