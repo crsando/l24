@@ -1,4 +1,7 @@
 
+local switch_factorial = false
+
+
 local function duplicate(t)
     local o = {}
     for k, v in pairs(t) do o[k] = v end
@@ -86,16 +89,16 @@ function calculate(seq)
         end
 
     local operators = {
-        ["+"] = wrap_binary(function(a,b) return a + b end) ,
-        ["-"] = wrap_binary(function(a,b) return a - b end) ,
-        ["*"] = wrap_binary(function(a,b) return a * b end) ,
+        ["+"] = wrap_binary(function(a,b) return a + b end),
+        ["-"] = wrap_binary(function(a,b) return a - b end),
+        ["*"] = wrap_binary(function(a,b) return a * b end),
         ["/"] = function()
                 local b = pop()
                 local a = pop()
 
                 if b == 0 then return false end
 
-                local r = a / b
+                local r = math.floor(a / b)
 
                 -- cannot be divided
                 if (b * r) ~= a then 
@@ -192,9 +195,11 @@ function search(nums)
             end
         end
 
-        if (depth >= 1) and (seq[#seq] ~= "!" ) then 
-            local r,t =  dive("!", 0)
-            if r then return r, t end
+        if switch_factorial then 
+            if (depth >= 1) and (seq[#seq] ~= "!" ) then 
+                local r,t =  dive("!", 0)
+                if r then return r, t end
+            end
         end
 
         -- nothing to search, abort
