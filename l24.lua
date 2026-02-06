@@ -212,7 +212,6 @@ function search(nums)
 end
 
 
-local inspect = require "inspect"
 
 local function test1() 
     local test_seq = { 0, 1, 2, "-", 4, "*", "-"  }
